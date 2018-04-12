@@ -1,0 +1,7 @@
+---
+- name: Fail if the image is not defined
+  fail:
+    msg: Mellanox UFM Docker image must be defined via 'mlnx_ufm_image'.
+  when: mlnx_ufm_image is none
+
+- include: "{{ mlnx_ufm_action }}.yml"

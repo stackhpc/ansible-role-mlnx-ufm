@@ -1,0 +1,10 @@
+---
+- name: Pulling UFM container image
+  docker_image:
+    name: "{{ item.value.image }}"
+    repository: "{{ item.value.image }}"
+    state: present
+  with_dict: "{{ mlnx_ufm_services }}"
+  when:
+    - item.value.enabled
+    - mlnx_ufm_action != 'destroy'

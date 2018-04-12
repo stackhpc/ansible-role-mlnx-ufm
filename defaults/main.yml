@@ -1,0 +1,34 @@
+---
+# Roughly follows kolla-ansible's service deployment patterns.
+
+# Action to perform. One of 'deploy', 'destroy', 'pull', 'reconfigure',
+# 'upgrade'.
+mlnx_ufm_action: deploy
+
+# Whether UFM is enabled.
+mlnx_ufm_enabled: true
+
+# Service deployment definition.
+mlnx_ufm_services:
+  mlnx_ufm:
+    container_name: mlnx_ufm
+    enabled: "{{ mlnx_ufm_enabled }}"
+    image: "{{ mlnx_ufm_image_full }}"
+    privileged: True
+    volumes:
+      - "/dev/log:/dev/log"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+      - "{{ mlnx_ufm_licenses_path }}:/opt/ufm/files/licenses/:ro"
+
+# Image used to create the container.
+mlnx_ufm_image:
+mlnx_ufm_tag: "latest"
+mlnx_ufm_image_full: "{{ mlnx_ufm_image }}:{{ mlnx_ufm_tag }}"
+
+# Container restart policy.
+mlnx_ufm_restart_policy: "unless-stopped"
+mlnx_ufm_restart_retries: 10
+
+# Path to a directory on the host containing Mellanox UFM licenses.
+mlnx_ufm_licenses_path: "/etc/mlnx-ufm/licenses"
