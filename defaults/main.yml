@@ -14,12 +14,22 @@ mlnx_ufm_services:
     container_name: mlnx_ufm
     enabled: "{{ mlnx_ufm_enabled }}"
     image: "{{ mlnx_ufm_image_full }}"
-    privileged: True
+    network_mode: host
+    privileged: true
+    # Ideally we'd define these tmpfs mounts, but the tmpfs argument is not
+    # supported by the docker_container Ansible module until Ansible 2.4.
+    #tmpfs:
+    #  - "/run"
+    #  - "/tmp"
     volumes:
-      - "/dev/log:/dev/log"
       - "/etc/localtime:/etc/localtime:ro"
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-      - "{{ mlnx_ufm_licenses_path }}:/opt/ufm/files/licenses/:ro"
+      # Ensures the container can see which modules are available.
+      - "/lib/modules:/lib/modules:ro"
+      - "{{ mlnx_ufm_config_path }}/mlnx-ufm-configure:/usr/bin/mlnx-ufm-configure:ro"
+      - "{{ mlnx_ufm_config_path }}/licenses:/opt/ufm/files/licenses/:ro"
+      - "mlnx_ufm_conf:/opt/ufm/files/conf"
+      - "mlnx_ufm_files:/opt/ufm/files"
+      - "mlnx_ufm_logs:/opt/ufm/files/log"
 
 # Image used to create the container.
 mlnx_ufm_image:
@@ -30,5 +40,11 @@ mlnx_ufm_image_full: "{{ mlnx_ufm_image }}:{{ mlnx_ufm_tag }}"
 mlnx_ufm_restart_policy: "unless-stopped"
 mlnx_ufm_restart_retries: 10
 
-# Path to a directory on the host containing Mellanox UFM licenses.
+# Path to a script template on localhost containing UFM startup configuration.
+mlnx_ufm_startup_config_path: "/etc/mlnx-ufm/mlnx-ufm-configure"
+
+# Path to a directory on localhost containing Mellanox UFM licenses.
 mlnx_ufm_licenses_path: "/etc/mlnx-ufm/licenses"
+
+# Path to a directory on the remote host to store configuration.
+mlnx_ufm_config_path: "/etc/mlnx-ufm"

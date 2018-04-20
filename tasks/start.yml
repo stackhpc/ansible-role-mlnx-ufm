@@ -1,0 +1,22 @@
+---
+- name: Ensure oci-systemd-hook is installed
+  yum:
+    name: oci-systemd-hook
+    state: installed
+  become: true
+
+- name: Ensure UFM container is running
+  docker_container:
+    exposed_ports: "{{ item.value.exposed_ports | default(omit) }}"
+    image: "{{ item.value.image }}"
+    name: "{{ item.value.container_name }}"
+    network_mode: "{{ item.value.network_mode | default(omit) }}"
+    privileged: "{{ item.value.privileged | default(omit) }}"
+    published_ports: "{{ item.value.published_ports | default(omit) }}"
+    read_only: "{{ item.value.read_only | default(omit) }}"
+    restart_policy: "{{ mlnx_ufm_restart_policy }}"
+    restart_retries: "{{ mlnx_ufm_restart_retries if mlnx_ufm_restart_policy == 'on-failure' else omit }}"
+    state: "{{ item.value.enabled | ternary('started', 'absent') }}"
+    tmpfs: "{{ item.value.tmpfs | default(omit) }}"
+    volumes: "{{ item.value.volumes }}"
+  with_dict: "{{ mlnx_ufm_services }}"

@@ -1,0 +1,30 @@
+---
+- name: Ensure configuration directory exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: 0755
+  become: true
+  with_items:
+    - "{{ mlnx_ufm_config_path }}"
+    - "{{ mlnx_ufm_config_path }}/licenses"
+
+- name: Ensure licenses are copied
+  copy:
+    src: "{{ mlnx_ufm_licenses_path }}/"
+    dest: "{{ mlnx_ufm_config_path }}/licenses"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: 0644
+  become: true
+
+- name: Ensure configuration script is copied
+  template:
+    src: "{{ mlnx_ufm_startup_config_path }}"
+    dest: "{{ mlnx_ufm_config_path }}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: 0755
+  become: true
