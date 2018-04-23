@@ -1,0 +1,37 @@
+---
+- name: Fail if the UFM version is not defined
+  fail:
+    msg: >
+      The UFM version must be configured via 'mlnx_ufm_version'.
+  when: mlnx_ufm_version is none
+
+- name: Fail if the UFM tarball URL is not defined
+  fail:
+    msg: >
+      The UFM software tarball URL must be configured via
+      'mlnx_ufm_tarball_url'.
+  when: mlnx_ufm_tarball_url is none
+
+- name: Fail if the OFED repo URL is not defined
+  fail:
+    msg: >
+      The OFED repository URL must be configured via
+      'mlnx_ufm_ofed_repo_url'.
+  when: mlnx_ufm_ofed_repo_url is none
+
+- name: Ensure the git repository is cloned
+  git:
+    repo: "{{ item.value.repo.url }}"
+    version: "{{ item.value.repo.version }}"
+    dest: "{{ mlnx_ufm_repo_checkout_path }}/{{ item.value.repo.url | basename }}"
+  with_dict: "{{ mlnx_ufm_images }}"
+
+- name: Ensure image is built
+  docker_image:
+    buildargs: "{{ item.value.buildargs | default(omit) }}"
+    force: "{{ mlnx_ufm_force_rebuild }}"
+    name: "{{ item.value.name }}"
+    path: "{{ mlnx_ufm_repo_checkout_path }}/{{ item.value.repo.url | basename }}"
+    push: "{{ mlnx_ufm_push }}"
+    state: present
+  with_dict: "{{ mlnx_ufm_images }}"
