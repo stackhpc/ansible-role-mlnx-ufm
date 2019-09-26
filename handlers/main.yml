@@ -1,0 +1,7 @@
+---
+
+- name: Restart UFM
+  docker_container:
+    name: "{{ mlnx_ufm_services.mlnx_ufm.container_name }}"
+    restart: true
+    state: started
