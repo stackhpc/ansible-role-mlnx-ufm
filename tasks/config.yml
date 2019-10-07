@@ -28,3 +28,4 @@
     group: "{{ ansible_user_id }}"
     mode: 0755
   become: true
+  notify: Restart mlnx_ufm

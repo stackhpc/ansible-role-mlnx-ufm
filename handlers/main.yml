@@ -1,0 +1,7 @@
+---
+
+- name: Restart mlnx_ufm
+  docker_container:
+    name: mlnx_ufm
+    restart: true
+    state: started
