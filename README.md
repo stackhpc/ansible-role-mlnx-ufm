@@ -50,6 +50,8 @@ The following variables are relevant only when ``mlnx_ufm_action`` is
   to build the image.
 * ``mlnx_ufm_ofed_repo_url``: URL of the OFED package repository. This must be
   set to build the image.
+* ``mlnx_ufm_centos_version``: Version of CentOS to use, e.g. ``7.6.1810``.
+  Leave empty to use default.
 * ``mlnx_ufm_push``: Whether to push images after they have been built. Default
   is ``false``.
 * ``mlnx_ufm_force_rebuild``: Whether to build the image even if an image of
