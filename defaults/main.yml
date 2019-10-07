@@ -83,7 +83,7 @@ mlnx_ufm_tarball_url:
 mlnx_ufm_ofed_repo_url:
 
 # Version of CentOS to use, e.g. 7.6.1810. Leave empty to use default.
-mlnx_ufm_centos_version:
+mlnx_ufm_centos_version: ""
 
 # Whether to push images after they have been built.
 mlnx_ufm_push: false
