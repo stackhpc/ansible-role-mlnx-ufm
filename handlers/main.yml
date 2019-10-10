@@ -1,7 +1,19 @@
 ---
 
 - name: Restart mlnx_ufm
+  vars:
+    mlnx_ufm: "{{ mlnx_ufm_services.mlnx_ufm }}"
   docker_container:
-    name: mlnx_ufm
+    exposed_ports: "{{ mlnx_ufm.exposed_ports | default(omit) }}"
+    image: "{{ mlnx_ufm.image }}"
+    name: "{{ mlnx_ufm.container_name }}"
+    network_mode: "{{ mlnx_ufm.network_mode | default(omit) }}"
+    privileged: "{{ mlnx_ufm.privileged | default(omit) }}"
+    published_ports: "{{ mlnx_ufm.published_ports | default(omit) }}"
+    read_only: "{{ mlnx_ufm.read_only | default(omit) }}"
     restart: true
-    state: started
+    restart_policy: "{{ mlnx_ufm_restart_policy }}"
+    restart_retries: "{{ mlnx_ufm_restart_retries if mlnx_ufm_restart_policy == 'on-failure' else omit }}"
+    state: "{{ mlnx_ufm.enabled | ternary('started', 'absent') }}"
+    tmpfs: "{{ mlnx_ufm.tmpfs | default(omit) }}"
+    volumes: "{{ mlnx_ufm.volumes }}"
