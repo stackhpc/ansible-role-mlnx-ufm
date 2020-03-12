@@ -2,7 +2,7 @@
 - name: Ensure oci-systemd-hook is installed
   yum:
     name: oci-systemd-hook
-    state: installed
+    state: present
   become: true
 
 - name: Include tasks to create UFM container
